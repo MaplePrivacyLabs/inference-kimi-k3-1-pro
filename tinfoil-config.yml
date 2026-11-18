@@ -18,6 +18,9 @@ containers:
   read_only: true
   gpus: all
   restart: always
+  secrets:
+  - VLLM_API_KEY
+  - METRICS_API_KEY
   env:
   - VLLM_DISABLE_UVA: '1'
   - VLLM_KIMI_K3_LATENT_MOE_TAIL_FUSION: '0'
@@ -110,16 +113,9 @@ containers:
     start_period: 120m
 shim:
   upstream-port: 8001
-  authenticated: true
-  authenticated-endpoints:
-  - /v1/chat/completions
-  - /v1/responses
-  - /tokenize
-  - /metrics
+  authenticated: false
   paths:
   - /v1/chat/completions
   - /v1/models
   - /v1/responses
-  - /tokenize
-  - /metrics
   - /health

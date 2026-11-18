@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           git ls-files --error-unmatch tinfoil-config.yml >/dev/null
-          printf '%s  %s\n' '4766e0aba2c4530cacf3081b29d96fac937354e4c6b6966634d84e5f3457bd7a' tinfoil-config.yml | sha256sum --check --strict
+          printf '%s  %s\n' '2400260beabc0fe45b1c959a29c1401fbd703d6b233efa7de883eccba29de68b' tinfoil-config.yml | sha256sum --check --strict
           git diff --exit-code -- tinfoil-config.yml
 
       - name: Measure, attest, and publish the staging release
