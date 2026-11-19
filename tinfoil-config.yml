@@ -1,5 +1,5 @@
 cvm-version: 0.14.17
-cpus: 32
+cpus: 120
 memory: 524288
 gpus: 8
 models:
@@ -13,7 +13,7 @@ models:
   schema: 1
 containers:
 - name: kimi-k3-1-pro
-  image: "ghcr.io/tinfoilsh/confidential-kimi-k31-pro@sha256:0a81868bb275945f23e0e71d53524dd9a416bfcde3acb14903af0c2139495bc0" # v0.0.2
+  image: "ghcr.io/mapleprivacylabs/inference-kimi-k3-1-pro:build-required" # source template; the release workflow pins the built digest
   runtime: nvidia
   read_only: true
   gpus: all
@@ -77,6 +77,8 @@ containers:
   - --trust-request-mm-kwargs
   - --scheduling-policy
   - priority
+  - --middleware
+  - maple_metrics_auth.MetricsAuthMiddleware
   - --port
   - '8001'
   - --max-model-len
@@ -98,7 +100,7 @@ containers:
   - --additional-config
   - '{"decode_backend":"auto","kda_spec_decode_backend":"flashinfer"}'
   - --speculative-config
-  - '{"model":"/tinfoil/mpk/mpk-37e89ad461fa86eddb78d2552fc7ddcfff6a5543086c08c8d03164609b2a65ba","method":"dspark","num_speculative_tokens":5,"draft_sample_method":"probabilistic","rejection_sample_method":"standard","attention_backend":"FLASHINFER_MLA","kv_cache_dtype":"fp8"}'
+  - '{"model":"/tinfoil/mpk/mpk-37e89ad461fa86eddb78d2552fc7ddcfff6a5543086c08c8d03164609b2a65ba","method":"dspark","num_speculative_tokens":3,"draft_sample_method":"probabilistic","rejection_sample_method":"standard","attention_backend":"FLASHINFER_MLA","kv_cache_dtype":"fp8"}'
   tmpfs:
     /tmp: size=1g,mode=1777,exec
     /root: size=20g,mode=0700,exec
@@ -119,3 +121,4 @@ shim:
   - /v1/models
   - /v1/responses
   - /health
+  - /metrics
