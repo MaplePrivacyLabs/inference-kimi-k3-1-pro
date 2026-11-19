@@ -13,7 +13,7 @@ models:
   schema: 1
 containers:
 - name: kimi-k3-1-pro
-  image: "ghcr.io/mapleprivacylabs/inference-kimi-k3-1-pro:build-required" # source template; the release workflow pins the built digest
+  image: "ghcr.io/mapleprivacylabs/inference-kimi-k3-1-pro@sha256:d5d3ec975af488693906a6a5346eff4ab7ee4b23db33d82cff05813732bf8f6e" # v0.1.0
   runtime: nvidia
   read_only: true
   gpus: all
