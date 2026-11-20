@@ -45,7 +45,7 @@ five seconds.
 | v0.2.2 | Compiled graphs for engine steps of up to 4,096 tokens (`cudagraph_capture_sizes` extended from 192 to 4,096) | With the cache working, most prompt chunks are a few thousand new tokens. Today any step carrying more than 192 tokens runs without a compiled graph, and every decoding request waits for it. vLLM's B300 preset for 12 to 24 concurrent agents does the same. Costs start-up time and some cache memory. |
 | v0.2.3 | `rejection_sample_method` `block` instead of `standard`; no `--kernel-config`, so vLLM picks the sparse-attention kernel itself | Block verification accepts more draft tokens per step without changing the output distribution; vLLM's B300 presets use it. With the cache split across GPUs vLLM's own default is a newer attention kernel than the one Tinfoil's recipe pins; this measures it on this host. A long-context retrieval check is run on both to confirm answers do not change. |
 | v0.2.4 | `--max-num-batched-tokens 4096` instead of 16,384; `--prefill-schedule-interval` removed | v0.2.2's compiled graphs cover steps of up to 4,096 tokens, but a cold prompt is still read in 16,384-token steps that run eagerly while every stream waits. Capping the step at the largest compiled size makes every step a graph replay and returns the memory the larger step reserved. v0.2.1's interval of 8 gained 3 to 6% in stream speed for half a second of first-token delay and is dropped here, because with small steps it would slow cold prompts too much. |
-| v0.2.5 | `--max-num-seqs 48` instead of 32 | At overload the node sits at its 32-request cap with more requests waiting for a slot. This measures whether total output keeps rising with more requests in the batch, and what it costs each stream and the cache, since every running request holds a fixed share of the cache pool. |
+| v0.2.5 | `--max-num-seqs 48` instead of 32, on v0.2.3's settings (the 16,384-token step and prefill interval of 8 are restored) | At overload the node sits at its 32-request cap with more requests waiting for a slot. This measures whether total output keeps rising with more requests in the batch, and what it costs each stream and the cache, since every running request holds a fixed share of the cache pool. |
 
 ## Maple's differences (v0.1.0 onwards)
 
@@ -79,5 +79,5 @@ weights.
 | v0.2.1 | `--prefill-schedule-interval 8`. Under evaluation. |
 | v0.2.2 | Compiled graphs for steps of up to 4,096 tokens. Under evaluation. |
 | v0.2.3 | Block verification of draft tokens; default sparse-attention kernel. Under evaluation. |
-| v0.2.4 | Engine step capped at 4,096 tokens; prefill interval removed. Under evaluation. |
-| v0.2.5 | Up to 48 concurrent requests. Under evaluation. |
+| v0.2.4 | Engine step capped at 4,096 tokens; prefill interval removed. Measured and not kept: first token about 0.4 s earlier and 15% more cache, but streams about 5% slower and 4% less output at overload than v0.2.3. |
+| v0.2.5 | v0.2.3's settings with up to 48 concurrent requests. Under evaluation. |
