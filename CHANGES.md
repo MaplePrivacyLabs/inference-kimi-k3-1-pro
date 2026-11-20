@@ -42,6 +42,7 @@ five seconds.
 | Release | Change | Why |
 |---|---|---|
 | v0.2.1 | `--prefill-schedule-interval 8` | Under a realistic long-context load, streams slow down most when other requests' prompt chunks share their engine step. This admits prefill on one step in eight and leaves the others to decode alone. vLLM's own B300 presets for agentic load use the same value. |
+| v0.2.2 | Compiled graphs for engine steps of up to 4,096 tokens (`cudagraph_capture_sizes` extended from 192 to 4,096) | With the cache working, most prompt chunks are a few thousand new tokens. Today any step carrying more than 192 tokens runs without a compiled graph, and every decoding request waits for it. vLLM's B300 preset for 12 to 24 concurrent agents does the same. Costs start-up time and some cache memory. |
 
 ## Maple's differences (v0.1.0 onwards)
 
@@ -73,3 +74,4 @@ weights.
 | v0.1.0 | Maple's five differences in the table above. |
 | v0.2.0 | Tinfoil's v0.0.3 recipe changes, listed at the top. Under evaluation. |
 | v0.2.1 | `--prefill-schedule-interval 8`. Under evaluation. |
+| v0.2.2 | Compiled graphs for steps of up to 4,096 tokens. Under evaluation. |
