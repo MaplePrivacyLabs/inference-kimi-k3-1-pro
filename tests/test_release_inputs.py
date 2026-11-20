@@ -88,7 +88,8 @@ class ConfigCheck(unittest.TestCase):
 
     def test_any_unlisted_difference_is_refused(self):
         changes = [
-            ("  - '262144'\n", "  - '131072'\n"),
+            ("  - '1048576'\n", "  - '262144'\n"),
+            ("  - '8'\n  - --dcp-comm-backend\n  - a2a\n", "  - '8'\n  - --dcp-comm-backend\n  - ag_rs\n"),
             ("  - kimi-k3-1-pro\n  - --tensor", "  - kimi-k3-1-pro-other\n  - --tensor"),
             ("8d9c355a94e60f43", "0e6d901b33b7a141"),
             ("  - /metrics\n", "  - /metrics\n  - /tokenize\n"),
@@ -103,7 +104,7 @@ class ConfigCheck(unittest.TestCase):
 
     def test_undoing_every_listed_difference_gives_stock(self):
         # Each listed difference is present exactly once, so none is dead.
-        for _, ours in check_config.EDITS:
+        for _, ours in check_config.EDITS + check_config.UPSTREAM_V003_EDITS[1:]:
             self.assertEqual(CONFIG.count(ours), 1, ours)
 
 
