@@ -47,6 +47,8 @@ EDITS = [
     # size with a compiled graph, so no step runs eagerly while other requests
     # wait. Replaces v0.2.1's --prefill-schedule-interval 8, which gained little.
     ("  - --max-num-batched-tokens\n  - '16384'\n", "  - --max-num-batched-tokens\n  - '4096'\n"),
+    # v0.2.5, under evaluation: up to 48 requests decoding at once instead of 32.
+    ("  - --max-num-seqs\n  - '32'\n", "  - --max-num-seqs\n  - '48'\n"),
     # v0.2.2, under evaluation: compiled graphs for engine steps of up to 4,096
     # tokens, so steps that carry a short prompt chunk beside the decoding
     # requests replay a graph instead of running eagerly.

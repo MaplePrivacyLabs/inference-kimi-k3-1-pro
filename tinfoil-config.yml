@@ -87,7 +87,7 @@ containers:
   - --max-model-len
   - '1048576'
   - --max-num-seqs
-  - '32'
+  - '48'
   - --max-num-batched-tokens
   - '4096'
   - --enable-prefix-caching
