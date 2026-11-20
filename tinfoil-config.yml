@@ -89,9 +89,7 @@ containers:
   - --max-num-seqs
   - '32'
   - --max-num-batched-tokens
-  - '16384'
-  - --prefill-schedule-interval
-  - '8'
+  - '4096'
   - --enable-prefix-caching
   - --prefix-match-unit
   - '128'
