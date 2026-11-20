@@ -47,6 +47,11 @@ EDITS = [
     # so the steps in between decode alone.
     ("  - --max-num-batched-tokens\n  - '16384'\n",
      "  - --max-num-batched-tokens\n  - '16384'\n  - --prefill-schedule-interval\n  - '8'\n"),
+    # v0.2.2, under evaluation: compiled graphs for engine steps of up to 4,096
+    # tokens, so steps that carry a short prompt chunk beside the decoding
+    # requests replay a graph instead of running eagerly.
+    (',180,186,192],"max_cudagraph_capture_size":192}\'',
+     ',180,186,192,224,256,320,384,448,512,640,768,1024,1280,1536,1792,2048,2560,3072,3584,4096],"max_cudagraph_capture_size":4096}\''),
 ]
 
 
