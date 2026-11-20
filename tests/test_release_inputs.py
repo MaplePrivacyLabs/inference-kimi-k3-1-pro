@@ -104,7 +104,7 @@ class ConfigCheck(unittest.TestCase):
 
     def test_undoing_every_listed_difference_gives_stock(self):
         # Each listed difference is present exactly once, so none is dead.
-        for _, ours in check_config.EDITS + check_config.UPSTREAM_V003_EDITS[1:]:
+        for _, ours in check_config.EDITS:
             self.assertEqual(CONFIG.count(ours), 1, ours)
 
 

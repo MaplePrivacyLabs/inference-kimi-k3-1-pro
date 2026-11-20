@@ -52,6 +52,11 @@ EDITS = [
     # requests replay a graph instead of running eagerly.
     (',180,186,192],"max_cudagraph_capture_size":192}\'',
      ',180,186,192,224,256,320,384,448,512,640,768,1024,1280,1536,1792,2048,2560,3072,3584,4096],"max_cudagraph_capture_size":4096}\''),
+    # v0.2.3, under evaluation: block verification of draft tokens, and vLLM's
+    # default choice of sparse-attention kernel instead of the one Tinfoil pins.
+    ('"rejection_sample_method":"standard"', '"rejection_sample_method":"block"'),
+    ("  - --kernel-config\n  - '{\"flashinfer_sparse_mla_kernel\":\"trtllm\"}'\n  - --disable-custom-all-reduce\n",
+     "  - --disable-custom-all-reduce\n"),
 ]
 
 
