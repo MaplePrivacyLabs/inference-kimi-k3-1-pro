@@ -49,14 +49,14 @@ EDITS = [
     # and less output at overload, and was not kept.)
     ("  - --max-num-batched-tokens\n  - '16384'\n",
      "  - --max-num-batched-tokens\n  - '16384'\n  - --prefill-schedule-interval\n  - '8'\n"),
-    # v0.2.5, under evaluation: up to 48 requests decoding at once instead of 32.
+    # v0.2.5: up to 48 requests decoding at once instead of 32.
     ("  - --max-num-seqs\n  - '32'\n", "  - --max-num-seqs\n  - '48'\n"),
-    # v0.2.2, under evaluation: compiled graphs for engine steps of up to 4,096
+    # v0.2.2: compiled graphs for engine steps of up to 4,096
     # tokens, so steps that carry a short prompt chunk beside the decoding
     # requests replay a graph instead of running eagerly.
     (',180,186,192],"max_cudagraph_capture_size":192}\'',
      ',180,186,192,224,256,320,384,448,512,640,768,1024,1280,1536,1792,2048,2560,3072,3584,4096],"max_cudagraph_capture_size":4096}\''),
-    # v0.2.3, under evaluation: block verification of draft tokens, and vLLM's
+    # v0.2.3: block verification of draft tokens, and vLLM's
     # default choice of sparse-attention kernel instead of the one Tinfoil pins.
     ('"rejection_sample_method":"standard"', '"rejection_sample_method":"block"'),
     ("  - --kernel-config\n  - '{\"flashinfer_sparse_mla_kernel\":\"trtllm\"}'\n  - --disable-custom-all-reduce\n",
