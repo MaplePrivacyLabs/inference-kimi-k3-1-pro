@@ -27,9 +27,21 @@ beyond it. v0.2.0 adds the changes Tinfoil made in their recipe v0.0.3
 | `--max-model-len 262144` | `1048576` | The length the change was made to support. |
 | no `--prefix-match-unit` | `128` | Cache hits can land on a 128-token boundary instead of a whole block. |
 
-Maple's five differences below are unchanged. Whether this configuration is
-kept depends on measurements that have not been made yet: start-up on this
-host, cache capacity, and decode speed with the extra GPU-to-GPU traffic.
+Maple's five differences below are unchanged.
+
+Measured on the dedicated node (v0.2.0, November 20, 2026): it starts in the
+usual time; vLLM reports a cache of 14.3 million tokens (1,035 blocks, 16,384
+attention tokens per block) against 2.4 million; sixty 100,000-token prompts
+all stayed cached, where v0.1.0 kept twenty-three; short-prompt decode is 8 to
+13% slower (122-128 tokens/s for one request, 1,450-1,465 at 32, against
+140-148 and 1,563-1,605); reading a cold 100,000-token prompt takes the same
+five seconds.
+
+### Further changes under evaluation
+
+| Release | Change | Why |
+|---|---|---|
+| v0.2.1 | `--prefill-schedule-interval 8` | Under a realistic long-context load, streams slow down most when other requests' prompt chunks share their engine step. This admits prefill on one step in eight and leaves the others to decode alone. vLLM's own B300 presets for agentic load use the same value. |
 
 ## Maple's differences (v0.1.0 onwards)
 
@@ -60,3 +72,4 @@ weights.
 | v0.0.3 | Native vLLM bearer authentication with `VLLM_API_KEY`; `METRICS_API_KEY` for the built-in guest metrics; public engine `/metrics` and `/tokenize` removed from the shim paths. |
 | v0.1.0 | Maple's five differences in the table above. |
 | v0.2.0 | Tinfoil's v0.0.3 recipe changes, listed at the top. Under evaluation. |
+| v0.2.1 | `--prefill-schedule-interval 8`. Under evaluation. |

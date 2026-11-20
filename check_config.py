@@ -43,6 +43,10 @@ EDITS = [
     (f'  image: "{STOCK_IMAGE}" # v0.0.3\n', IMAGE_TEMPLATE_LINE),
     ("  - --port\n  - '8001'\n", "  - --middleware\n  - maple_metrics_auth.MetricsAuthMiddleware\n  - --port\n  - '8001'\n"),
     ("  - /health\n", "  - /health\n  - /metrics\n"),
+    # v0.2.1, under evaluation: admit prefill work on one engine step in eight,
+    # so the steps in between decode alone.
+    ("  - --max-num-batched-tokens\n  - '16384'\n",
+     "  - --max-num-batched-tokens\n  - '16384'\n  - --prefill-schedule-interval\n  - '8'\n"),
 ]
 
 
