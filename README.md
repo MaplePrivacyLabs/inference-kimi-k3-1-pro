@@ -1,6 +1,6 @@
 # Kimi K3.1 Pro on Tinfoil
 
-This repository signs a measured deployment of Tinfoil's Kimi K3.1 Pro recipe for Maple's dedicated node. The weights are stock: `moonshotai/Kimi-K3.1-Pro` and the Inferact DSpark draft model, each pinned to an immutable revision and a schema 1 Modelwrap pack, served under the model name `kimi-k3-1-pro`. Release v0.1.0 follows Tinfoil's recipe v0.0.2, which their shared fleet runs; v0.2.0 adds the changes of their recipe v0.0.3 and is under evaluation. [Upstream recipe](https://github.com/tinfoilsh/confidential-kimi-k3-1-pro/blob/v0.0.2/tinfoil-config.yml)
+This repository signs a measured deployment of Tinfoil's Kimi K3.1 Pro recipe for Maple's dedicated node. The weights are stock: `moonshotai/Kimi-K3.1-Pro` and the Inferact DSpark draft model, each pinned to an immutable revision and a schema 1 Modelwrap pack, served under the model name `kimi-k3-1-pro`. Release v0.1.0 follows Tinfoil's recipe v0.0.2, which their shared fleet runs; v0.2.0 adds the changes of their recipe v0.0.3, and v0.2.5, which the node runs, adds Maple's tuning for long cached conversations. [Upstream recipe](https://github.com/tinfoilsh/confidential-kimi-k3-1-pro/blob/v0.0.2/tinfoil-config.yml)
 
 From v0.1.0 the configuration differs from stock in five listed ways, none of which touch the weights: more vCPUs, three draft tokens instead of five, and vLLM's `/metrics` served behind the Maple metrics key by an image this repository builds. [CHANGES.md](CHANGES.md) gives each difference and its reason.
 

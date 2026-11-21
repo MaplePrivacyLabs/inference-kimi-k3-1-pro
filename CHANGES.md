@@ -9,14 +9,16 @@ repository's v0.0.3: Tinfoil's v0.0.2 recipe with native vLLM bearer
 authentication. `UPSTREAM_V003_EDITS` holds Tinfoil's own changes from their
 recipe v0.0.2 to v0.0.3; `EDITS` holds Maple's.
 
-## v0.2.0: Tinfoil's v0.0.3 recipe (under evaluation)
+## v0.2.0 to v0.2.5: Tinfoil's v0.0.3 recipe and Maple's tuning
 
-Release v0.1.0 is the qualified configuration. On the dedicated node its
-prefix cache holds about 2.4 million tokens (1,179 blocks of 2,048), shared
-between running requests and retained conversations. That is roughly twenty
-warm 100,000-token conversations, and load tests showed cache hits collapsing
-beyond it. v0.2.0 adds the changes Tinfoil made in their recipe v0.0.3
-("expand long-context serving capacity") to see what they do on this host:
+Release v0.2.5 is the configuration the dedicated node runs. It was chosen
+after the load tests summarised under [Outcome](#outcome).
+
+On release v0.1.0 the node's prefix cache holds about 2.4 million tokens
+(1,179 blocks of 2,048), shared between running requests and retained
+conversations. That is roughly twenty warm 100,000-token conversations, and
+load tests showed cache hits collapsing beyond it. v0.2.0 adds the changes
+Tinfoil made in their recipe v0.0.3 ("expand long-context serving capacity"):
 
 | Tinfoil v0.0.2 | Tinfoil v0.0.3 | What it is for |
 |---|---|---|
@@ -37,7 +39,7 @@ all stayed cached, where v0.1.0 kept twenty-three; short-prompt decode is 8 to
 140-148 and 1,563-1,605); reading a cold 100,000-token prompt takes the same
 five seconds.
 
-### Further changes under evaluation
+### Maple's further changes
 
 | Release | Change | Why |
 |---|---|---|
@@ -46,6 +48,27 @@ five seconds.
 | v0.2.3 | `rejection_sample_method` `block` instead of `standard`; no `--kernel-config`, so vLLM picks the sparse-attention kernel itself | Block verification accepts more draft tokens per step without changing the output distribution; vLLM's B300 presets use it. With the cache split across GPUs vLLM's own default is a newer attention kernel than the one Tinfoil's recipe pins; this measures it on this host. A long-context retrieval check is run on both to confirm answers do not change. |
 | v0.2.4 | `--max-num-batched-tokens 4096` instead of 16,384; `--prefill-schedule-interval` removed | v0.2.2's compiled graphs cover steps of up to 4,096 tokens, but a cold prompt is still read in 16,384-token steps that run eagerly while every stream waits. Capping the step at the largest compiled size makes every step a graph replay and returns the memory the larger step reserved. v0.2.1's interval of 8 gained 3 to 6% in stream speed for half a second of first-token delay and is dropped here, because with small steps it would slow cold prompts too much. |
 | v0.2.5 | `--max-num-seqs 48` instead of 32, on v0.2.3's settings (the 16,384-token step and prefill interval of 8 are restored) | At overload the node sits at its 32-request cap with more requests waiting for a slot. This measures whether total output keeps rising with more requests in the batch, and what it costs each stream and the cache, since every running request holds a fixed share of the cache pool. |
+
+v0.2.1, v0.2.2, v0.2.3 and v0.2.5 are kept, each on top of the one before.
+v0.2.4 was measured and not kept.
+
+### Outcome
+
+Measured on the dedicated node on November 20, 2026, with an open-loop load of
+long conversations at a 96% cached share, each step run once for seven minutes:
+
+| Load | v0.1.0 | v0.2.5 |
+|---|---|---|
+| One request, short prompt | 140-148 tokens/s | 124-131 tokens/s |
+| 25 conversations, 0.75 requests/s | cache hits fall to 23%; median stream 13 tokens/s; median first token 145 s | median stream 51 tokens/s; 95% of first tokens within 1.7 s; 901 tokens/s in total |
+| 12 conversations, 1.0 requests/s | 95% of first tokens within 36 s; 990 tokens/s in total | 95% of first tokens within 2.7 s; 1,053 tokens/s in total |
+| 25 conversations, 1.0 requests/s | not run | holds: median stream 37 tokens/s; 1,165 tokens/s in total |
+| Coding-agent sessions | degrades at 24 sessions | 48 sessions at 862 tokens/s in total, 95-98% cache hits |
+
+v0.2.5 queues at 1.25 requests/s, and 49 conversations at 1.0 requests/s
+exceed its cache (77% hits). A long-context exact-recall check scored 90 of 90
+on v0.2.2 to v0.2.5, so the attention-kernel and cache changes did not change
+answers. Not yet done: a long soak, and a measurement through Maple's backend.
 
 ## Maple's differences (v0.1.0 onwards)
 
@@ -75,9 +98,9 @@ weights.
 | v0.0.2 | Tinfoil's v0.0.2 configuration, byte for byte. |
 | v0.0.3 | Native vLLM bearer authentication with `VLLM_API_KEY`; `METRICS_API_KEY` for the built-in guest metrics; public engine `/metrics` and `/tokenize` removed from the shim paths. |
 | v0.1.0 | Maple's five differences in the table above. |
-| v0.2.0 | Tinfoil's v0.0.3 recipe changes, listed at the top. Under evaluation. |
-| v0.2.1 | `--prefill-schedule-interval 8`. Under evaluation. |
-| v0.2.2 | Compiled graphs for steps of up to 4,096 tokens. Under evaluation. |
-| v0.2.3 | Block verification of draft tokens; default sparse-attention kernel. Under evaluation. |
+| v0.2.0 | Tinfoil's v0.0.3 recipe changes, listed at the top. Kept. |
+| v0.2.1 | `--prefill-schedule-interval 8`. Kept. |
+| v0.2.2 | Compiled graphs for steps of up to 4,096 tokens. Kept. |
+| v0.2.3 | Block verification of draft tokens; default sparse-attention kernel. Kept. |
 | v0.2.4 | Engine step capped at 4,096 tokens; prefill interval removed. Measured and not kept: first token about 0.4 s earlier and 15% more cache, but streams about 5% slower and 4% less output at overload than v0.2.3. |
-| v0.2.5 | v0.2.3's settings with up to 48 concurrent requests. Under evaluation. |
+| v0.2.5 | v0.2.3's settings with up to 48 concurrent requests. Kept; the release the node runs. |
